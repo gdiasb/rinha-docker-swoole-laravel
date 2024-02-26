@@ -24,12 +24,7 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN composer install
 
 RUN composer require laravel/octane
-RUN composer install
 RUN php artisan octane:install --server=swoole
 
-#EXPOSE 9000
 
 CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=9000", "--log-level=debug"]
-
-#RUN php artisan octane:status
-#CMD ["php", "artisan", "octane:status"]
