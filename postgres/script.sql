@@ -17,6 +17,8 @@ CREATE UNLOGGED TABLE transacoes (
     cliente_id INT NOT NULL, 
     tipo CHAR(1) NOT NULL,
     realizada_em TIMESTAMP NOT NULL,
+    valor BIGINT NOT NULL,
+    descricao VARCHAR(10) NOT NULL,
 
     CONSTRAINT fk_cliente_id
         FOREIGN KEY (cliente_id) REFERENCES clientes(id)

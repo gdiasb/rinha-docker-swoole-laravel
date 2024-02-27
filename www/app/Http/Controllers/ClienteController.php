@@ -24,34 +24,15 @@ class ClienteController extends Controller
     }
 
 
-    public function show(int $cliente_id): JsonResponse
+    public function show(int $id)
     {
-        $cliente = Cliente::findorFail($cliente_id);
+        $cliente = Cliente::findorFail($id);
 
-        return response()->json($cliente, 200);
+        return response()->json([
+            "nome" => $cliente->nome,
+            "saldo" => $cliente->saldo
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cliente $cliente)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cliente $cliente)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cliente $cliente)
-    {
-        //
-    }
 }
