@@ -2,64 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransacaoRequest;
 use App\Models\Transacao;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Models\Cliente;
 
 class TransacaoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function store(TransacaoRequest $request, int $id): JsonResponse
     {
-        //
+
+        $cliente = Cliente::findOrFail($id);
+
+        $valor = $request->input('valor');
+        $saldo = $cliente->saldo;
+
+        if ($request->input('tipo') === 'd') {
+            $novoSaldo = $saldo - $valor;
+
+            if ($novoSaldo < - $cliente->limite) {
+                return response()->json('Transação inválida: limite não permite', 400);
+            }
+
+            $cliente->update([
+                'saldo' => $novoSaldo
+            ]);
+        }
+        else {
+            $cliente->update([
+                'saldo' => $saldo + $valor
+            ]);
+        }
+
+        $transacao = Transacao::create([
+            'cliente_id' => $id,
+            'valor' => $request->input('valor'),
+            'tipo' => $request->input('tipo'),
+            'descricao' => $request->input('descricao')
+        ]);
+
+        return response()->json($transacao, 201);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Transacao $transacao)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transacao $transacao)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transacao $transacao)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transacao $transacao)
-    {
-        //
-    }
 }

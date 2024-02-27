@@ -24,9 +24,11 @@ class ClienteController extends Controller
     }
 
 
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
         $cliente = Cliente::findorFail($id);
+
+        
 
         return response()->json([
             "nome" => $cliente->nome,
