@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TransacaoRequest;
 use App\Models\Transacao;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use App\Models\Cliente;
+use Illuminate\Http\Response;
 
 class TransacaoController extends Controller
 {
@@ -13,7 +15,12 @@ class TransacaoController extends Controller
     public function store(TransacaoRequest $request, int $id): JsonResponse
     {
 
-        $cliente = Cliente::findOrFail($id);
+        try {
+            $cliente = Cliente::findOrFail($id);
+        }
+        catch (ModelNotFoundException $e) {
+            return response()->json(["message"=> "Cliente não encontrado"], Response::HTTP_NOT_FOUND);
+        }
 
         $valor = $request->input('valor');
         $saldo = $cliente->saldo;
@@ -22,7 +29,7 @@ class TransacaoController extends Controller
             $novoSaldo = $saldo - $valor;
 
             if ($novoSaldo < - $cliente->limite) {
-                return response()->json('Transação inválida: limite não permite', 400);
+                return response()->json('Transação inválida: limite não permite', Response::HTTP_BAD_REQUEST);
             }
 
             $cliente->update([
@@ -42,7 +49,7 @@ class TransacaoController extends Controller
             'descricao' => $request->input('descricao')
         ]);
 
-        return response()->json($transacao, 201);
+        return response()->json($transacao, Response::HTTP_CREATED);
     }
 
 
