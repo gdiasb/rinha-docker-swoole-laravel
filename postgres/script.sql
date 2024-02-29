@@ -25,6 +25,6 @@ CREATE UNLOGGED TABLE transacoes (
         ON DELETE CASCADE
 );
 
-INSERT INTO transacoes (cliente_id, tipo, realizada_em, valor, descricao) VALUES
-    (1, 'c', '2024-01-17T02:34:38.543030Z', 10, 'descricao'),
-    (1, 'd', '2024-01-17T02:34:38.543030Z', 90000, 'descricao');
+-- INSERT INTO transacoes (cliente_id, tipo, realizada_em, valor, descricao) VALUES
+--     (1, 'c', '2024-01-17T02:34:38.543030Z', 10, 'descricao'),
+--     (1, 'd', '2024-01-17T02:34:38.543030Z', 90000, 'descricao');

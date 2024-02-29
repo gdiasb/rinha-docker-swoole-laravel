@@ -29,7 +29,7 @@ class TransacaoController extends Controller
             $novoSaldo = $saldo - $valor;
 
             if ($novoSaldo < - $cliente->limite) {
-                return response()->json('Transação inválida: limite não permite', Response::HTTP_BAD_REQUEST);
+                return response()->json('Transação inválida: limite não permite', Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             $cliente->update([
@@ -49,7 +49,10 @@ class TransacaoController extends Controller
             'descricao' => $request->input('descricao')
         ]);
 
-        return response()->json($transacao, Response::HTTP_CREATED);
+        return response()->json([
+            "limite" => $cliente->limite,
+            "saldo" => $cliente->saldo
+        ], Response::HTTP_OK);
     }
 
 
