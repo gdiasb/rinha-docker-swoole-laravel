@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('clientes', [ClienteController::class, 'index']);
 Route::get('clientes/{id}', [ClienteController::class, 'show']);
-Route::get('clientes/{id}/extrato', [ClienteController::class, 'extrato']);
+Route::get('clientes/{id}/extrato', [ClienteController::class, 'extrato'])->middleware('throttle');
 
 Route::post('clientes/{id}/transacoes', [TransacaoController::class, 'store']);
 
