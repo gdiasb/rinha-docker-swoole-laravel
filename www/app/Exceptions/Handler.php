@@ -5,7 +5,9 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Request;
 use Throwable;
 
 
@@ -29,6 +31,10 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (ModelNotFoundException $e, Request $request): JsonResponse {
+            return response()->json(["message"=> "Cliente não encontrado"], Response::HTTP_NOT_FOUND);
         });
     }
 

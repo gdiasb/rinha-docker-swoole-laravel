@@ -26,6 +26,7 @@ services:
       dockerfile: Dockerfile
     hostname: api01
     container_name: api01
+    restart: always
     user: "1000:1000"
     volumes:
       - ./www/:/var/www/
@@ -35,7 +36,7 @@ services:
       resources:
         limits:
           cpus: "0.6"
-          memory: "2400MB"
+          memory: "240MB"
 
   api02:
     <<: *api 

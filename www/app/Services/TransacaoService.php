@@ -2,41 +2,44 @@
 
 namespace App\Services;
 
+use App\Exceptions\LimiteInsuficienteException;
 use App\Models\Cliente;
+use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Response;
+
 
 class TransacaoService {
 
 
-    function first() {
-
-
-
-    }
-
     static function debito(Cliente $cliente, int $valor, string $descricao) {
-
-        DB::beginTransaction();
 
         $saldo = $cliente->saldo;
         $novoSaldo = $saldo - $valor;
 
+
         if ($novoSaldo < - $cliente->limite) {
-            DB::rollBack();
-            return response()->json('Transação inválida: limite não permite', Response::HTTP_UNPROCESSABLE_ENTITY);
+            throw new LimiteInsuficienteException;
         }
 
-        DB::table('clientes')->where('id', $cliente->id)->decrement('saldo', $valor);
+        try {
+            DB::beginTransaction();
 
-        DB::table('transacoes')->updateOrInsert([
-            'cliente_id' => $cliente->id,
-            'valor' => $valor,
-            'tipo' => 'd',
-            'descricao' => $descricao
-        ]);
+            $cliente->update(['saldo' => $novoSaldo]);
 
-        DB::commit();
+            DB::table('transacoes')->updateOrInsert([
+                'cliente_id' => $cliente->id,
+                'valor' => $valor,
+                'tipo' => 'd',
+                'realizada_em' => now(),
+                'descricao' => $descricao
+            ]);
+
+            DB::commit();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
 
@@ -50,6 +53,7 @@ class TransacaoService {
             'cliente_id' => $cliente->id,
             'valor' => $valor,
             'tipo' => 'c',
+            'realizada_em' => now(),
             'descricao' => $descricao
         ]);
 
